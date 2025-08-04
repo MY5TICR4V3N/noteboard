@@ -23,8 +23,13 @@ const NoteCard = ({note}) => {
   return (
     <Link to={`/note/${note._id}`} className='card bg-blue-50 border-t-4 border-purple-200 hover:shadow-lg transition-all duration-200 rounded-xl'>
       <div className='card-body p-5'>
-        <h3 className='card-title text-blue-400 font-bold'>{note.title}</h3>
+        <h3 className='card-title text-blue-300 font-bold'>{note.title}</h3>
         <p className='text-purple-400/80 line-clamp-3'>{note.content}</p>
+        <div className='flex flex-wrap gap-2 mt-2'>
+          {note.tags.map((tag) => (
+            <button key={tag} className='badge badge-sm badge-blue-300 text-pink-300'>{tag}</button>
+          ))}
+        </div>
         <div className='card-actions justify-between items-center mt-4'>
             <span className='text-xs text-pink-300'>
                 {formatDate(new Date(note.createdAt))}

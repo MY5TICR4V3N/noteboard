@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import rateLimiter from './middleware/rateLimiter.js';
 import cors from 'cors';
 import path from 'path';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 const PORT=process.env.PORT || 5000;
@@ -24,6 +25,8 @@ app.use((req, res, next) => {
   console.log(`Request Method: ${req.method}, Request URL: ${req.url}`);
   next();
 });
+
+app.use("/api/user", userRoutes);
 
 app.use("/api/notes",notesRoutes);
 

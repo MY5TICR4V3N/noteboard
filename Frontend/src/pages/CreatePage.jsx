@@ -5,12 +5,16 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';  
 import api from '../lib/axios';
+import TagPicker from '../components/TagPicker';
 
 const CreatePage = () => {
   const [title,setTitle] = useState('');
   const [content,setContent] = useState('');
   const[loading,setLoading] = useState(false);
   const navigate = useNavigate();
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,10 +26,9 @@ const CreatePage = () => {
     }
     setLoading(true);
     try{
-      await api.post('/notes', {
-        title,
-        content
-      });
+      await api.post('/notes', {title, content, tags: selectedTags});
+      console.log("Selected Tags:", selectedTags); // ✅ should show selected values like ['Work', 'Ideas']
+
       toast.success('Note created successfully');
       navigate('/');
 
@@ -70,7 +73,11 @@ const CreatePage = () => {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                 ></textarea>
+                 {/* title + content input */}
+                <TagPicker selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
               </div>
+              
+
               <div className='card-actions justify-end'>
                 <button type='submit'
                  className='btn bg-sky-100 text-sky-400 border-none hover:bg-sky-200 rounded'

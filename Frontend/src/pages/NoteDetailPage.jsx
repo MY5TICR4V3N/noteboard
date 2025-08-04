@@ -3,11 +3,13 @@ import React, { useEffect } from 'react';
 import api from '../lib/axios';
 import { useParams, useNavigate, Link } from 'react-router'; // <-- Use react-router-dom
 import toast from 'react-hot-toast';
+import TagPicker from '../components/TagPicker';
 
 const NoteDetailPage = () => {
   const [note, setNote] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
+  const [selectedTags, setSelectedTags] = React.useState([]);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -17,6 +19,7 @@ const NoteDetailPage = () => {
       try {
         const response = await api.get(`/notes/${id}`);
         setNote(response.data);
+        console.log("Fetched Note:", response.data); // Debugging line
       } catch (error) {
         console.error('Error fetching note:', error);
         toast.error('Failed to fetch note');
@@ -27,6 +30,13 @@ const NoteDetailPage = () => {
 
     fetchNote();
   }, [id]);
+
+  useEffect(() => {
+  if (note?.tags) {
+    setSelectedTags(note.tags);
+  }
+}, [note]);
+
 
   const handleDelete = async () => {
     if(!window.confirm('Are you sure you want to delete this note?')) return;
@@ -49,9 +59,10 @@ const NoteDetailPage = () => {
       toast.error('Title and content are required');
       return;
     }
-
+    
     try {
       setSaving(true);
+      note.tags = selectedTags; // Ensure tags are included in the note object
       await api.put(`/notes/${note._id}`, note);
       toast.success('Note updated successfully');
     } catch (error) {
@@ -71,6 +82,9 @@ const NoteDetailPage = () => {
       </div>
     )
   }
+
+
+
 
   return(
     <div className='min-h-screen'
@@ -116,6 +130,17 @@ const NoteDetailPage = () => {
                   required
                 />
               </div>
+
+              <div className='form-control mb-4 px-4'>
+                <label className='label'>
+                  <span className='label-text text-purple-400 font-semibold'>Tags</span>
+                </label>
+                <TagPicker selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+
+
+              </div>
+
+
 
               <div className='card-actions justify-end'>
                 <button
